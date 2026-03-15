@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <rect width="512" height="512" rx="80" fill="#1a1a2e"/>
+  <!-- Sword -->
+  <line x1="160" y1="352" x2="352" y2="160" stroke="#7b68ee" stroke-width="28" stroke-linecap="round"/>
+  <!-- Guard -->
+  <line x1="195" y1="317" x2="150" y2="362" stroke="#7b68ee" stroke-width="20" stroke-linecap="round" transform="rotate(-45 172.5 339.5)"/>
+  <line x1="195" y1="317" x2="240" y2="272" stroke="#7b68ee" stroke-width="20" stroke-linecap="round" transform="rotate(-45 217.5 294.5)"/>
+  <!-- Pommel -->
+  <circle cx="145" cy="367" r="18" fill="#9b88ff"/>
+  <!-- Blade tip -->
+  <polygon points="352,160 370,142 388,160 370,178" fill="#c0b0ff" transform="rotate(45 370 160)"/>
+  <!-- Shield outline -->
+  <path d="M256 80 L320 110 L320 200 Q320 260 256 290 Q192 260 192 200 L192 110 Z"
+        fill="none" stroke="#533483" stroke-width="16"/>
+  <!-- D20 hint: small diamond -->
+  <polygon points="256,170 275,200 256,230 237,200" fill="none" stroke="#7b68ee" stroke-width="8"/>
+</svg>
