@@ -4,7 +4,7 @@ const defaults = {
   name: '',
   type: 'player',
   initiative: '',
-  initiativeMod: '0',
+  initiativeMod: '',
   ac: '',
 };
 
@@ -13,27 +13,27 @@ function roll20() {
 }
 
 export default function AddCombatantModal({ initial, onAdd, onClose }) {
+  const isEdit = !!initial;
+
   const [form, setForm] = useState(
     initial
       ? {
           name: initial.name,
           type: initial.type,
           initiative: String(initial.initiative),
-          initiativeMod: '0',
+          initiativeMod: '',
           ac: initial.ac != null ? String(initial.ac) : '',
         }
       : defaults
   );
+  const [saveToLib, setSaveToLib] = useState(false);
 
-  const isEdit = !!initial;
-
-  function set(key, value) {
-    setForm(f => ({ ...f, [key]: value }));
-  }
+  function set(k, v) { setForm(f => ({ ...f, [k]: v })); }
 
   function rollInit() {
-    const mod = parseInt(form.initiativeMod, 10) || 0;
-    set('initiative', String(roll20() + mod));
+    const mod = form.initiativeMod !== '' ? parseInt(form.initiativeMod, 10) : null;
+    // No mod → default 20, matching library behaviour
+    set('initiative', mod != null && !isNaN(mod) ? String(roll20() + mod) : '20');
   }
 
   function handleSubmit(e) {
@@ -43,14 +43,18 @@ export default function AddCombatantModal({ initial, onAdd, onClose }) {
     const initiative = parseInt(form.initiative, 10);
     if (isNaN(initiative)) return;
     const ac = form.ac !== '' ? parseInt(form.ac, 10) : null;
+    const initiativeMod = form.initiativeMod !== '' ? parseInt(form.initiativeMod, 10) : null;
 
-    const payload = {
-      name,
-      type: form.type,
-      initiative,
-      ac: !isNaN(ac) ? ac : null,
-    };
-    onAdd(payload);
+    onAdd(
+      {
+        name,
+        type: form.type,
+        initiative,
+        ac: !isNaN(ac) && ac !== null ? ac : null,
+        initiativeMod: initiativeMod !== null && !isNaN(initiativeMod) ? initiativeMod : null,
+      },
+      !isEdit && saveToLib
+    );
     onClose();
   }
 
@@ -63,14 +67,8 @@ export default function AddCombatantModal({ initial, onAdd, onClose }) {
           <div className="form-row">
             <div className="form-group" style={{ flex: 2 }}>
               <label>Name</label>
-              <input
-                type="text"
-                placeholder="Goblin, Aragorn…"
-                value={form.name}
-                onChange={e => set('name', e.target.value)}
-                required
-                autoFocus
-              />
+              <input type="text" placeholder="Goblin, Aragorn…" value={form.name}
+                onChange={e => set('name', e.target.value)} required autoFocus />
             </div>
             <div className="form-group">
               <label>Type</label>
@@ -86,29 +84,15 @@ export default function AddCombatantModal({ initial, onAdd, onClose }) {
           <div className="form-row">
             <div className="form-group">
               <label>Initiative</label>
-              <input
-                type="number"
-                placeholder="15"
-                value={form.initiative}
-                onChange={e => set('initiative', e.target.value)}
-                required
-              />
+              <input type="number" placeholder="15" value={form.initiative}
+                onChange={e => set('initiative', e.target.value)} required />
             </div>
             <div className="form-group">
               <label>Init Mod</label>
-              <input
-                type="number"
-                placeholder="+2"
-                value={form.initiativeMod}
-                onChange={e => set('initiativeMod', e.target.value)}
-              />
+              <input type="number" placeholder="blank=20" value={form.initiativeMod}
+                onChange={e => set('initiativeMod', e.target.value)} />
             </div>
-            <button
-              type="button"
-              className="roll-btn"
-              onClick={rollInit}
-              title="Roll d20 + modifier"
-            >
+            <button type="button" className="roll-btn" onClick={rollInit} title="Roll d20 + modifier">
               🎲 Roll
             </button>
           </div>
@@ -117,15 +101,18 @@ export default function AddCombatantModal({ initial, onAdd, onClose }) {
           <div className="form-row">
             <div className="form-group">
               <label>AC (optional)</label>
-              <input
-                type="number"
-                min="1"
-                placeholder="14"
-                value={form.ac}
-                onChange={e => set('ac', e.target.value)}
-              />
+              <input type="number" min="1" placeholder="14" value={form.ac}
+                onChange={e => set('ac', e.target.value)} />
             </div>
           </div>
+
+          {/* Save to library toggle (new combatants only) */}
+          {!isEdit && (
+            <label className="save-to-lib-row">
+              <input type="checkbox" checked={saveToLib} onChange={e => setSaveToLib(e.target.checked)} />
+              <span>Save to Library as template</span>
+            </label>
+          )}
 
           <div className="modal-actions">
             <button type="button" className="btn-secondary" onClick={onClose}>Cancel</button>

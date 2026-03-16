@@ -1,8 +1,10 @@
 import { useState, useEffect, useCallback } from 'react';
 import CombatantCard from './components/CombatantCard.jsx';
 import AddCombatantModal from './components/AddCombatantModal.jsx';
+import LibraryPanel from './components/LibraryPanel.jsx';
 import ConfirmDialog from './components/ConfirmDialog.jsx';
 import Toast from './components/Toast.jsx';
+import { useLibrary } from './lib/library.js';
 
 const STORAGE_KEY = 'ttrpg-combat-tracker-v1';
 
@@ -31,10 +33,12 @@ const initialState = {
 export default function App() {
   const [state, setState] = useState(() => loadState() || initialState);
   const [showAdd, setShowAdd] = useState(false);
+  const [showLibrary, setShowLibrary] = useState(false);
   const [editTarget, setEditTarget] = useState(null);
   const [confirmReset, setConfirmReset] = useState(false);
   const [toast, setToast] = useState(null);
 
+  const { library, saveTemplate, deleteTemplate, saveGroup, deleteGroup } = useLibrary();
   const { combatants, activeIndex, round, inCombat } = state;
 
   useEffect(() => {
@@ -50,17 +54,36 @@ export default function App() {
     setState(prev => ({ ...prev, ...patch }));
   }
 
-  function addCombatant(data) {
-    const sorted = [...combatants, { ...data, id: crypto.randomUUID(), conditions: [] }]
+  function insertCombatants(newOnes) {
+    const sorted = [...combatants, ...newOnes]
       .sort((a, b) => b.initiative - a.initiative);
     update({ combatants: sorted });
+  }
+
+  function addCombatant(data, saveToLib) {
+    insertCombatants([{ ...data, id: crypto.randomUUID(), conditions: [] }]);
     showToast(`${data.name} added`);
+    if (saveToLib) {
+      saveTemplate({
+        name: data.name,
+        type: data.type,
+        ac: data.ac ?? null,
+        initiativeMod: data.initiativeMod ?? null,
+      });
+      showToast(`${data.name} added & saved to library`);
+    }
+  }
+
+  // Called from LibraryPanel when adding one or more pre-built combatants
+  function addFromLibrary(combatantList) {
+    insertCombatants(combatantList);
+    const names = combatantList.map(c => c.name).join(', ');
+    showToast(`Added: ${names}`);
   }
 
   function editCombatant(id, data) {
     const updated = combatants.map(c => c.id === id ? { ...c, ...data } : c)
       .sort((a, b) => b.initiative - a.initiative);
-    // preserve active combatant reference after re-sort
     const activeCombatant = combatants[activeIndex];
     const newIndex = activeCombatant
       ? updated.findIndex(c => c.id === activeCombatant.id)
@@ -130,12 +153,15 @@ export default function App() {
           )}
         </div>
         <div className="header-actions">
+          <button
+            className={`btn-icon${showLibrary ? ' active' : ''}`}
+            onClick={() => setShowLibrary(v => !v)}
+            title="Library"
+          >
+            📚
+          </button>
           {combatants.length > 0 && (
-            <button
-              className="btn-icon"
-              onClick={() => setConfirmReset(true)}
-              title="Reset combat"
-            >
+            <button className="btn-icon" onClick={() => setConfirmReset(true)} title="Reset combat">
               🗑
             </button>
           )}
@@ -170,7 +196,7 @@ export default function App() {
           <div className="empty-state">
             <div className="icon">🎲</div>
             <h2>No combatants yet</h2>
-            <p>Add players and enemies, then hit Start to begin tracking initiative.</p>
+            <p>Add combatants manually or pick from your 📚 Library.</p>
           </div>
         ) : (
           combatants.map((c, i) => (
@@ -186,7 +212,7 @@ export default function App() {
         )}
       </main>
 
-      {/* FAB – Add combatant */}
+      {/* FAB */}
       <button className="fab" onClick={() => setShowAdd(true)}>
         + Add Combatant
       </button>
@@ -204,6 +230,18 @@ export default function App() {
           initial={editTarget}
           onAdd={(data) => { editCombatant(editTarget.id, data); setEditTarget(null); }}
           onClose={() => setEditTarget(null)}
+        />
+      )}
+
+      {showLibrary && (
+        <LibraryPanel
+          library={library}
+          onClose={() => setShowLibrary(false)}
+          onAddCombatants={(list) => { addFromLibrary(list); setShowLibrary(false); }}
+          saveTemplate={saveTemplate}
+          deleteTemplate={deleteTemplate}
+          saveGroup={saveGroup}
+          deleteGroup={deleteGroup}
         />
       )}
 
