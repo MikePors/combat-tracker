@@ -5,7 +5,6 @@ const defaults = {
   type: 'player',
   initiative: '',
   initiativeMod: '0',
-  maxHp: '',
   ac: '',
 };
 
@@ -21,7 +20,6 @@ export default function AddCombatantModal({ initial, onAdd, onClose }) {
           type: initial.type,
           initiative: String(initial.initiative),
           initiativeMod: '0',
-          maxHp: String(initial.maxHp),
           ac: initial.ac != null ? String(initial.ac) : '',
         }
       : defaults
@@ -44,16 +42,12 @@ export default function AddCombatantModal({ initial, onAdd, onClose }) {
     if (!name) return;
     const initiative = parseInt(form.initiative, 10);
     if (isNaN(initiative)) return;
-    const maxHp = parseInt(form.maxHp, 10);
-    if (isNaN(maxHp) || maxHp < 1) return;
     const ac = form.ac !== '' ? parseInt(form.ac, 10) : null;
 
     const payload = {
       name,
       type: form.type,
       initiative,
-      maxHp,
-      hp: isEdit ? initial.hp : maxHp,
       ac: !isNaN(ac) ? ac : null,
     };
     onAdd(payload);
@@ -119,19 +113,8 @@ export default function AddCombatantModal({ initial, onAdd, onClose }) {
             </button>
           </div>
 
-          {/* HP + AC */}
+          {/* AC */}
           <div className="form-row">
-            <div className="form-group">
-              <label>Max HP</label>
-              <input
-                type="number"
-                min="1"
-                placeholder="20"
-                value={form.maxHp}
-                onChange={e => set('maxHp', e.target.value)}
-                required
-              />
-            </div>
             <div className="form-group">
               <label>AC (optional)</label>
               <input

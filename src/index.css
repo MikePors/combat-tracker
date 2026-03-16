@@ -232,10 +232,6 @@ button:disabled { opacity: 0.4; cursor: not-allowed; }
   box-shadow: var(--shadow-active);
 }
 
-.combatant-card.is-dead {
-  opacity: 0.45;
-  filter: grayscale(0.6);
-}
 
 .card-main {
   display: flex;
@@ -291,10 +287,6 @@ button:disabled { opacity: 0.4; cursor: not-allowed; }
   color: var(--text-secondary);
 }
 
-.hp-text { font-weight: 600; }
-.hp-text.bloodied { color: var(--warning); }
-.hp-text.critical  { color: var(--danger); }
-.hp-text.dead      { color: var(--text-muted); }
 
 .ac-text { color: var(--text-muted); }
 
@@ -339,56 +331,6 @@ button:disabled { opacity: 0.4; cursor: not-allowed; }
   background: rgba(0,0,0,0.2);
 }
 
-.hp-controls {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  margin-bottom: 12px;
-}
-
-.hp-controls label {
-  font-size: 0.8rem;
-  color: var(--text-secondary);
-  margin-right: auto;
-}
-
-.hp-input {
-  width: 60px;
-  padding: 6px 8px;
-  background: var(--bg-base);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-sm);
-  color: var(--text-primary);
-  font-size: 0.9rem;
-  text-align: center;
-  font-family: inherit;
-}
-.hp-input:focus { outline: none; border-color: var(--accent); }
-
-.hp-btn {
-  width: 32px;
-  height: 32px;
-  border-radius: var(--radius-sm);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-weight: 700;
-  font-size: 1rem;
-}
-
-.hp-bar-wrap {
-  height: 6px;
-  background: var(--bg-base);
-  border-radius: 3px;
-  overflow: hidden;
-  margin-bottom: 12px;
-}
-
-.hp-bar {
-  height: 100%;
-  border-radius: 3px;
-  transition: width 0.3s ease, background 0.3s ease;
-}
 
 .conditions-section label {
   font-size: 0.78rem;
@@ -442,10 +384,6 @@ button:disabled { opacity: 0.4; cursor: not-allowed; }
   gap: 4px;
 }
 
-/* ── HP bar colors ── */
-.hp-healthy  { background: var(--success); }
-.hp-bloodied { background: var(--warning); }
-.hp-critical { background: var(--danger); }
 
 /* ── FAB ── */
 .fab {

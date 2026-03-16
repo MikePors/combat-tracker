@@ -19,7 +19,8 @@ Parameters:
   AliasHostname:
     Type: String
     Default: ''
-    Description: Custom domain name (e.g. combat.example.com). Leave empty to skip.
+    Description: >
+      Custom domain name (e.g. combat.example.com). Leave empty to skip.
 
 Conditions:
   HasCustomDomain: !And

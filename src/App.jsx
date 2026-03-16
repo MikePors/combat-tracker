@@ -79,14 +79,6 @@ export default function App() {
     update({ combatants: updated, activeIndex: newIndex });
   }
 
-  function updateHP(id, newHP) {
-    update({
-      combatants: combatants.map(c =>
-        c.id === id ? { ...c, hp: Math.min(c.maxHp, Math.max(0, newHP)) } : c
-      ),
-    });
-  }
-
   function toggleCondition(id, condition) {
     update({
       combatants: combatants.map(c => {
@@ -188,7 +180,6 @@ export default function App() {
               isActive={inCombat && i === activeIndex}
               onEdit={() => setEditTarget(c)}
               onRemove={() => removeCombatant(c.id)}
-              onHPChange={(hp) => updateHP(c.id, hp)}
               onToggleCondition={(cond) => toggleCondition(c.id, cond)}
             />
           ))

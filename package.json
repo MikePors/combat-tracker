@@ -2,11 +2,13 @@
   "name": "ttrpg-combat-tracker",
   "version": "1.0.0",
   "private": true,
+  "type": "module",
   "description": "A PWA for tracking TTRPG initiative and combat",
   "scripts": {
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview",
+    "lint": "eslint src",
     "deploy": "bash deploy/deploy.sh"
   },
   "dependencies": {
@@ -14,8 +16,13 @@
     "react-dom": "^18.3.1"
   },
   "devDependencies": {
-    "@vitejs/plugin-react": "^4.3.4",
-    "vite": "^5.4.10",
-    "vite-plugin-pwa": "^0.21.1"
+    "@eslint/js": "^9.39.4",
+    "@vitejs/plugin-react": "^4.7.0",
+    "eslint": "^9.39.4",
+    "eslint-plugin-react": "^7.37.5",
+    "eslint-plugin-react-hooks": "^7.0.1",
+    "globals": "^17.4.0",
+    "vite": "^7.0.0",
+    "vite-plugin-pwa": "^1.2.0"
   }
 }
